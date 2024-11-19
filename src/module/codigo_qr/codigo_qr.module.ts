@@ -4,6 +4,6 @@ import { CodigoQrService } from './codigo_qr.service';
 
 @Module({
   controllers: [CodigoQrController],
-  providers: [CodigoQrService]
+  providers: [CodigoQrService],
 })
 export class CodigoQrModule {}
