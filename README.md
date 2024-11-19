@@ -1,99 +1,95 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Manual de Funcionamiento de "Aviturismo"
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Este documento describe cómo funciona el sistema **"Aviturismo"** para el registro y gestión de observaciones de aves. A continuación, se detallan los pasos del proceso y las relaciones de la base de datos involucradas.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Flujo de Trabajo
 
-## Description
+### 1. Registro e Inicio de Sesión
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- **Registro**: Los usuarios nuevos completan un formulario con su nombre, correo electrónico y contraseña. Estos datos se almacenan en la tabla `usuarios`.
+  
+- **Inicio de sesión**: El sistema verifica el correo electrónico y la contraseña del usuario en la tabla `usuarios` para autenticarlo.
 
-## Project setup
+### 2. Dashboard de Usuario
 
-```bash
-$ npm install
-```
+- Después de iniciar sesión, el usuario accede a su dashboard, donde puede ver las observaciones previas y registrar una nueva observación de ave.
 
-## Compile and run the project
+### 3. Captura de Imagen
 
-```bash
-# development
-$ npm run start
+- El usuario puede capturar una foto en tiempo real o seleccionar una imagen de la galería. La URL de la imagen se guarda en la tabla `imagenes` y se asocia a una observación específica mediante `id_observacion`.
 
-# watch mode
-$ npm run start:dev
+### 4. Registro de Observación de Ave
 
-# production mode
-$ npm run start:prod
-```
+El usuario completa un formulario de observación en tres pasos:
+  
+  1. **Detalles del observador y la especie del ave**:  
+     - Campos: `nombre_observador`, `especie_ave`.
+  
+  2. **Características físicas del ave**:  
+     - Campos: `cantidad_aves`, `tamano_ave`, `patron_alas`.
+  
+  3. **Información ambiental y de comportamiento**:  
+     - Campos: `condiciones_climaticas`, `tipo_habitat`, `comportamiento`.
+  
+  4. **Ubicación de la observación**:  
+     - Campos: `ubicacion_latitud`, `ubicacion_longitud`.
 
-## Run tests
+Estos datos se validan y se insertan en la tabla `observaciones`.
 
-```bash
-# unit tests
-$ npm run test
+### 5. Generación de Código QR
 
-# e2e tests
-$ npm run test:e2e
+- Tras completar el registro de la observación, se genera un **código QR** que contiene información clave de la observación (por ejemplo, un enlace a los detalles). 
+- Los datos del código QR se guardan en la tabla `codigos_qr` y se asocian con la observación correspondiente.
 
-# test coverage
-$ npm run test:cov
-```
+### 6. Vista de Detalles de la Observación
 
-## Deployment
+- El usuario puede visualizar una vista previa de la observación, que incluye la imagen y todos los detalles ingresados.
+- Si se generó un código QR, también se muestra en esta pantalla.
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+### 7. Guardar y Publicar Observación
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+- Si el usuario confirma que la información es correcta, la observación se guarda en la tabla `publicaciones`, asociada al `id_usuario` y al `id_observacion`.
 
-```bash
-$ npm install -g mau
-$ mau deploy
-```
+### 8. Gestión de Observaciones
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+- Los usuarios pueden ver todas sus observaciones desde su perfil, donde pueden editar o eliminar cada publicación.
+- Al eliminar una publicación, se borran los registros correspondientes de las tablas `publicaciones`, `observaciones`, `imagenes` y `codigos_qr`.
 
-## Resources
+## Relaciones de la Base de Datos
 
-Check out a few resources that may come in handy when working with NestJS:
+- **Usuarios**: Un usuario puede tener múltiples observaciones.
+- **Observaciones**: Cada observación está vinculada a una imagen y un código QR.
+- **Publicaciones**: Cada observación publicada se asocia con un registro en la tabla `publicaciones`.
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## Flujo de Datos
 
-## Support
+1. Un usuario **registra una observación**.
+2. Se guarda la **imagen** y se genera un **código QR**.
+3. Los datos de la observación se **guardan** en la base de datos.
+4. Se muestra una **vista previa** para confirmar la publicación.
+5. La observación se **publica** y puede ser gestionada desde el perfil del usuario.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## Resumen
 
-## Stay in touch
+Este sistema está diseñado para gestionar de manera eficiente las observaciones de aves, permitiendo a los usuarios registrar, visualizar, editar, eliminar y compartir observaciones mediante códigos QR. La estructura de base de datos y el flujo de trabajo garantizan un proceso organizado y fluido para cada usuario.
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
 
-## License
+## Instalación
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+1. Clona este repositorio en tu máquina local:
+
+   ```bash
+   git clone https://github.com/12CUY/aviturismo_movil_backend.git
+
+2. instalar dependencias
+   ```bash
+   npm i
+
+3. iniciar el proyecto
+   crear una base de datos en mysql 
+   ```bash
+   npm run start:dev
+
+# back_aviturismo
+
+<img src="/img/data.jpeg" alt="drawing" width="200"/>
