@@ -16,9 +16,6 @@ export class Usuario {
   @Column({ type: 'varchar', length: 255 })
   contrasena: string;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  fecha_registro: Date;
-
   @OneToMany(() => Publicacion, (publicacion) => publicacion.usuario)
   publicaciones: Publicacion[];
 

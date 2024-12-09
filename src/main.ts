@@ -1,8 +1,16 @@
+import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  await app.listen(process.env.PORT ?? 3000);
+
+  // Habilitar CORS para permitir solicitudes desde cualquier origen
+  app.enableCors();
+
+  // Habilitar validación global
+  app.useGlobalPipes(new ValidationPipe());
+
+  await app.listen(3000);
 }
 bootstrap();
