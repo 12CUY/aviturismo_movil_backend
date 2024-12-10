@@ -1,7 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { Usuario } from '../usuario/usuario.entity';
-import { Imagen } from '../imagenes/imagenes.entity';
-import { CodigoQR } from '../codigo_qr/codigo_qr.entity';
+
 
 @Entity('observaciones')
 export class Observacion {
@@ -10,6 +9,9 @@ export class Observacion {
 
   @ManyToOne(() => Usuario, (usuario) => usuario.observaciones)
   usuario: Usuario;
+
+  @Column({ type: 'varchar', length: 255 })
+  url_imagen: string;
 
   @Column({ type: 'varchar', length: 100 })
   nombre_observador: string;
@@ -41,22 +43,4 @@ export class Observacion {
   @Column({ type: 'varchar', length: 100 })
   color_ave: string;
 
-  @Column({ type: 'text' })
-  comportamiento: string;
-
-  @Column({ type: 'decimal', precision: 9, scale: 6 })
-  ubicacion_latitud: number;
-
-  @Column({ type: 'decimal', precision: 9, scale: 6 })
-  ubicacion_longitud: number;
-
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  fecha_observacion: Date;
-
-  @OneToMany(() => Imagen, (imagen) => imagen.observacion)
-  imagenes: Imagen[];
-
-  @OneToMany(() => CodigoQR, (codigo) => codigo.observacion)
-  codigos_qr: CodigoQR[];
-  publicaciones: any;
 }
